@@ -1,48 +1,45 @@
-# Обзор проекта TestStellarBurgers
+# Тестовый проект Stellar Burgers
 
-## 1. Назначение и стек
+Автоматизированные UI-тесты сервиса **Stellar Burgers** (учебный проект Яндекс.Практикума) на связке **Python + Selenium + Pytest** по паттерну **Page Object Model (POM)**.
 
-UI-автотесты сервиса **Stellar Burgers** (учебный сервис Яндекс.Практикума) на связке **Python + Selenium + Pytest** по паттерну **Page Object Model (POM)**.
+## Технологии
 
 | Компонент | Технология | Версия |
 |---|---|---|
 | Язык | Python | 3.14 |
 | Тестовый фреймворк | pytest | 9.1.1 |
 | Браузерная автоматизация | Selenium | 4.47.0 |
-| Управление драйвером | webdriver-manager | 4.1.2 |
-| Браузер | Google Chrome | 152 |
+| Браузер | Google Chrome | 151 |
 
----
-
-## 2. Дерево файлов
+## Структура проекта
 
 ```
 TestStellarBurgers/
-├── conftest.py              # фикстуры (driver, base_url, registered_user)
-├── pytest.ini               # конфигурация pytest + маркеры
-├── requirements.txt         # зависимости
-├── data/
-│   ├── __init__.py          # экспорт констант
-│   ├── urls.py              # URL сервиса
-│   └── test_data.py         # тестовые данные
-├── locators/
-│   ├── __init__.py          # экспорт локаторов
+├── conftest.py                    # фикстуры pytest
+├── pytest.ini                     # конфигурация pytest и маркеры
+├── requirements.txt               # зависимости
+├── data/                          # тестовые данные и URL
+│   ├── __init__.py
+│   ├── urls.py                    # константы маршрутов
+│   └── test_data.py               # тестовые данные и генераторы
+├── locators/                      # локаторы элементов
+│   ├── __init__.py
 │   ├── main_locators.py
 │   ├── login_locators.py
 │   ├── register_locators.py
 │   ├── forgot_password_locators.py
 │   ├── profile_locators.py
 │   └── header_locators.py
-├── pages/
-│   ├── __init__.py          # экспорт page-классов
-│   ├── base_page.py         # базовый класс
+├── pages/                         # Page Object-классы
+│   ├── __init__.py
+│   ├── base_page.py               # базовый класс страницы
 │   ├── main_page.py
 │   ├── login_page.py
 │   ├── register_page.py
 │   ├── forgot_password_page.py
 │   ├── profile_page.py
 │   └── header.py
-└── tests/
+└── tests/                         # тестовые наборы
     ├── __init__.py
     ├── test_register.py
     ├── test_login.py
@@ -51,118 +48,169 @@ TestStellarBurgers/
     └── test_constructor.py
 ```
 
----
+## Слои проекта
 
-## 3. Описание модулей
+### 1. data/ — данные
 
-### 3.1 `conftest.py`
+- **urls.py** — базовый URL и маршруты: `LOGIN_PAGE`, `REGISTER_PAGE`, `FORGOT_PASSWORD_PAGE`, `PROFILE_PAGE`.
+- **test_data.py** — валидные/невалидные значения (`VALID_NAME`, `VALID_PASSWORD`, `SHORT_PASSWORD`, `EXPECTED_PASSWORD_ERROR`) и функция `generate_email()` для уникальной почты.
 
-| Элемент | Тип | Назначение |
-|---|---|---|
-| `driver` | fixture (function) | Создаёт Chrome c чистым профилем, `--window-size`, `--disable-extensions`, `implicitly_wait(5)`. Закрывает через `quit()` |
-| `base_url` | fixture | Возвращает `BASE_URL` |
-| `registered_user` | fixture | Регистрирует пользователя через UI, возвращает `{email, password, name}` |
+### 2. locators/ — локаторы
 
-**Методы фикстур (косвенно задействованы):**
-- `RegisterPage.register()` — регистрация внутри `registered_user`
-- `time.time()` — генерация уникального email
+Каждый файл содержит класс с XPath-локаторами соответствующей страницы или шапки:
 
-### 3.2 `pages/base_page.py` — `BasePage`
+| Класс | Назначение |
+|---|---|
+| `MainPageLocators` | кнопка входа, заголовок конструктора, табы разделов |
+| `LoginPageLocators` | поля email/пароля, кнопка «Войти», ссылка восстановления |
+| `RegisterPageLocators` | поля формы, кнопка регистрации, ошибка пароля |
+| `ForgotPasswordPageLocators` | ссылка «Войти» |
+| `ProfilePageLocators` | поля профиля, кнопка «Выход» |
+| `HeaderLocators` | логотип, «Конструктор», «Личный кабинет» |
 
-Базовый класс всех страниц.
+### 3. pages/ — Page Objects
 
-| Метод | Сигнатура | Назначение                                      |
-|---|---|-------------------------------------------------|
-| `__init__` | `(driver, timeout=10)` | Инициализирует `driver` и `WebDriverWait`       |
-| `find` | `(locator)` | Поиск элемента                                  |
-| `click` | `(locator)` | Клик по элементу                                |
-| `input_text` | `(locator, text)` | Очистка и ввод текста                           |
-| `get_text` | `(locator)` | Возвращает текст элемента                       |
-| `is_displayed` | `(locator)` | Проверка видимости, глушит исключения → `False` |
-| `current_url` | — | Текущий URL                                     |
-| `get_attribute` | `(locator, attribute)` | Значение атрибута элемента                      |
+**BasePage** — базовый класс всех страниц. Содержит:
 
-### 3.3 `pages/main_page.py` — `MainPage`
+- `find(locator)` — поиск элемента
+- `click(locator)` — клик с ожиданием кликабельности
+- `input_text(locator, text)` — очистка и ввод
+- `get_text(locator)` / `get_attribute(locator, attr)` — чтение
+- `is_displayed(locator, timeout)` — проверка видимости
+- `current_url()` — текущий URL
+
+**MainPage** — главная страница и конструктор:
 
 | Метод | Назначение |
 |---|---|
-| `click_login_button` | Клик «Войти в аккаунт» |
-| `is_constructor_loaded` | Проверка заголовка «Соберите бургер» |
-| `click_tab` | Клик по табу ингредиента |
-| `is_tab_active` | Проверка класса `current` у таба |
+| `click_login_button()` | открыть форму входа |
+| `is_constructor_loaded()` | проверка загрузки конструктора |
+| `click_tab(tab_locator)` | перейти в раздел ингредиентов |
+| `is_tab_active(tab_locator)` | активен ли раздел |
 
-### 3.4 `pages/login_page.py` — `LoginPage`
-
-| Метод | Назначение |
-|---|---|
-| `input_email` | Ввод email |
-| `input_password` | Ввод пароля |
-| `click_login` | Клик «Войти» |
-| `login` | Комплекс: email + пароль + submit |
-| `is_login_button_displayed` | Проверка кнопки «Войти» |
-| `wait_for_current_url` | Ожидание конкретного URL |
-| `click_recover_link` | Клик «Восстановить пароль» |
-
-### 3.5 `pages/register_page.py` — `RegisterPage`
+**LoginPage** — форма входа:
 
 | Метод | Назначение |
 |---|---|
-| `fill_name` | Ввод имени |
-| `fill_email` | Ввод email |
-| `fill_password` | Ввод пароля |
-| `click_register` | Клик «Зарегистрироваться» |
-| `register` | Комплексная регистрация |
-| `get_error_text` | Текст ошибки пароля |
-| `is_error_displayed` | Показ ошибки пароля |
-| `wait_for_login_page` | Ожидание перехода на логин |
-| `click_login_link` | Клик «Войти» на форме регистрации |
+| `input_email()` / `input_password()` | ввод креденшелов |
+| `click_login()` / `login()` | отправка формы |
+| `is_login_button_displayed()` | проверка формы |
+| `click_recover_link()` | переход к восстановлению |
+| `wait_for_current_url(url)` | ожидание URL |
+| `open_login_via_*()` | статические точки входа в логин |
 
-### 3.6 `pages/profile_page.py` — `ProfilePage`
+**RegisterPage** — форма регистрации:
 
 | Метод | Назначение |
 |---|---|
-| `click_logout` | Клик «Выход» |
-| `get_profile_email` | Email из поля «Логин» |
-| `get_profile_name` | Имя из поля «Имя» |
-| `is_logout_displayed` | Проверка кнопки «Выход» |
-| `wait_until_loaded` | Ожидание загрузки профиля |
+| `fill_name()` / `fill_email()` / `fill_password()` | ввод данных |
+| `click_register()` / `register()` | отправка формы |
+| `get_error_text()` / `is_error_displayed()` | работа с ошибкой пароля |
+| `wait_for_login_page()` | ожидание перехода на вход |
+| `click_login_link()` | переход ко входу |
 
-### 3.7 `pages/header.py` — `Header`
-
-| Метод | Назначение |
-|---|---|
-| `click_profile_button` | Клик «Личный кабинет» |
-| `click_constructor_button` | Клик «Конструктор» |
-| `click_logo` | Клик по логотипу |
-
-### 3.8 `pages/forgot_password_page.py` — `ForgotPasswordPage`
+**ProfilePage** — личный кабинет:
 
 | Метод | Назначение |
 |---|---|
-| `click_login_link` | Клик «Войти» |
+| `click_logout()` | выход из аккаунта |
+| `get_profile_email()` / `get_profile_name()` | чтение данных профиля |
+| `is_logout_displayed()` | признак авторизации |
+| `wait_until_loaded()` | ожидание загрузки профиля |
 
-### 3.9 Локаторы (`locators/*.py`)
+**Header** — шапка сайта:
 
-| Класс | Локаторы |
+| Метод | Назначение |
 |---|---|
-| `MainPageLocators` | `LOGIN_BUTTON`, `CONSTRUCTOR_HEADER`, `BUNS_SECTION`, `SAUCES_SECTION`, `FILLINGS_SECTION` |
-| `LoginPageLocators` | `EMAIL_INPUT`, `PASSWORD_INPUT`, `LOGIN_BUTTON`, `RECOVER_LINK` |
-| `RegisterPageLocators` | `NAME_INPUT`, `EMAIL_INPUT`, `PASSWORD_INPUT`, `REGISTER_BUTTON`, `PASSWORD_ERROR`, `LOGIN_LINK` |
-| `ForgotPasswordPageLocators` | `LOGIN_LINK` |
-| `ProfilePageLocators` | `NAME_INPUT`, `EMAIL_INPUT`, `LOGOUT_BUTTON` |
-| `HeaderLocators` | `LOGO`, `CONSTRUCTOR_BUTTON`, `PROFILE_BUTTON` |
+| `click_profile_button()` | переход в ЛК |
+| `click_constructor_button()` | переход в конструктор |
+| `click_logo()` | клик по логотипу |
 
----
+**ForgotPasswordPage** — восстановление пароля:
 
-## 4. Таблица связей
-
-| Модуль | Импортирует |
+| Метод | Назначение |
 |---|---|
-| `conftest.py` | `data.urls`, `pages.register_page` |
-| `pages/base_page.py` | `selenium.webdriver.*` |
-| Все page-классы | `base_page.BasePage` + свой `locators` |
-| `tests/test_login.py` | `MainPage`, `LoginPage`, `RegisterPage`, `ForgotPasswordPage`, `Header`, `ProfilePage` |
-| `tests/test_profile.py` | `Header`, `LoginPage`, `ProfilePage`, `data.urls` |
-| `tests/test_navigation.py` | `Header`, `LoginPage`, `MainPage`, `ProfilePage` |
-| `tests/test_constructor.py` | `MainPage`, `MainPageLocators` |
+| `click_login_link()` | ссылка «Войти» |
 
+### 4. conftest.py — фикстуры
+
+| Фикстура | Назначение |
+|---|---|
+| `driver` | браузер Chrome с `implicitly_wait(5)`, закрытие через `quit()` |
+| `registered_user` | регистрация пользователя через UI, возвращает `email`/`password`/`name` |
+
+## Тестовые наборы
+
+### test_register.py
+
+| Тест | Проверка |
+|---|---|
+| `test_successful_registration` | успешная регистрация → переход на вход |
+| `test_registration_with_short_password_shows_error` | ошибка при пароле короче 6 символов |
+
+### test_login.py
+
+| Тест | Проверка |
+|---|---|
+| `test_login_from_different_entry_points` (параметризован) | вход через 4 точки: главная, «Личный кабинет», регистрация, восстановление пароля |
+
+### test_profile.py
+
+| Тест | Проверка |
+|---|---|
+| `test_transition_to_profile` | переход в ЛК, наличие кнопки «Выйти» и корректный URL |
+| `test_logout_from_profile` | выход по кнопке «Выход» → форма входа |
+
+### test_navigation.py
+
+| Тест | Проверка |
+|---|---|
+| `test_navigate_to_constructor_via_button` | переход в конструктор по кнопке «Конструктор» |
+| `test_navigate_to_constructor_via_logo` | переход в конструктор по логотипу |
+
+### test_constructor.py
+
+| Тест | Проверка |
+|---|---|
+| `test_section_navigation_to_buns` | переход в раздел «Булки» |
+| `test_section_navigation_to_sauces` | переход в раздел «Соусы» |
+| `test_section_navigation_to_fillings` | переход в раздел «Начинки» |
+
+## Маркеры
+
+В `pytest.ini` объявлены маркеры:
+
+```ini
+smoke: Критические сценарии (регистрация и вход)
+regression: Полный регрессионный набор
+```
+
+## Установка и запуск
+
+### 1. Установка зависимостей
+
+```bash
+pip install -r requirements.txt
+```
+
+### 2. Chromedriver
+
+Версия `chromedriver` должна совпадать с установленной версией Google Chrome. Драйвер должен находиться в `PATH` системы.
+
+Скачать нужную версию: [Chrome for Testing](https://googlechromelabs.github.io/chrome-for-testing/).
+
+### 3. Запуск тестов
+
+```bash
+# весь набор
+pytest
+
+# конкретный файл
+pytest tests/test_login.py
+
+# по маркеру
+pytest -m smoke
+
+# подробный вывод
+pytest -v --tb=long
+```
