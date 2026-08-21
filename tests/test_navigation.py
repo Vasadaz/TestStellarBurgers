@@ -5,8 +5,7 @@ from pages.profile_page import ProfilePage
 from data.urls import LOGIN_PAGE
 
 class TestNavigation:
-
-    def test_navigate_to_constructor_via_button(self, driver, base_url, registered_user):
+    def test_navigate_to_constructor_via_button(self, driver, registered_user):
         """Переход из ЛК в конструктор по кнопке «Конструктор»."""
         driver.get(LOGIN_PAGE)
         LoginPage(driver).login(registered_user["email"], registered_user["password"])
@@ -18,7 +17,7 @@ class TestNavigation:
         # Маркер главной страницы — кнопка «Войти в аккаунт» или заголовок конструктора
         assert MainPage(driver).is_constructor_loaded(), "Конструктор не открылся по кнопке"
 
-    def test_navigate_to_constructor_via_logo(self, driver, base_url, registered_user):
+    def test_navigate_to_constructor_via_logo(self, driver, registered_user):
         """Переход из ЛК в конструктор по клику на логотип Stellar Burgers."""
         driver.get(LOGIN_PAGE)
         LoginPage(driver).login(registered_user["email"], registered_user["password"])

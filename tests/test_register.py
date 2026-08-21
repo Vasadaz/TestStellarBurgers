@@ -1,14 +1,16 @@
 import time
 
 from data.test_data import generate_email
+from data.urls import REGISTER_PAGE
+
 from pages.register_page import RegisterPage
 from pages.login_page import LoginPage
 
 
 class TestRegistration:
 
-    def test_successful_registration(self, driver, base_url):
-        driver.get(base_url + "register")
+    def test_successful_registration(self, driver):
+        driver.get(REGISTER_PAGE)
 
         # Регистрация уникального пользователя
         RegisterPage(driver).register("Тестовый Пользователь", generate_email(), "password123")
@@ -17,8 +19,8 @@ class TestRegistration:
             "После успешной регистрации не отобразилась страница входа"
         )
 
-    def test_registration_with_short_password_shows_error(self, driver, base_url):
-        driver.get(base_url + "register")
+    def test_registration_with_short_password_shows_error(self, driver):
+        driver.get(REGISTER_PAGE)
 
         email = f"test_{int(time.time() * 1000)}@ya.ru"
         register_page = RegisterPage(driver)

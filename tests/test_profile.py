@@ -1,17 +1,13 @@
 from pages.header import Header
 from pages.login_page import LoginPage
 from pages.profile_page import ProfilePage
+from data.urls import LOGIN_PAGE
 
 class TestProfile:
-
-    def _login(self, driver, base_url, registered_user):
-        """Вспомогательный шаг авторизации перед проверками ЛК."""
-        driver.get(base_url + "login")
-        LoginPage(driver).login(registered_user["email"], registered_user["password"])
-
-    def test_transition_to_profile(self, driver, base_url, registered_user):
+    def test_transition_to_profile(self, driver, registered_user):
         """Переход в личный кабинет по клику на «Личный кабинет» (до авторизации — редирект на вход)."""
-        self._login(driver, base_url, registered_user)
+        driver.get(LOGIN_PAGE)
+        LoginPage(driver).login(registered_user["email"], registered_user["password"])
 
         # После входа переходим в ЛК по кнопке в шапке
         Header(driver).click_profile_button()
@@ -22,9 +18,10 @@ class TestProfile:
         assert profile.is_logout_displayed(), "Личный кабинет не открылся: нет кнопки «Выйти»"
         assert "account" in driver.current_url, "URL не соответствует личному кабинету"
 
-    def test_logout_from_profile(self, driver, base_url, registered_user):
+    def test_logout_from_profile(self, driver, registered_user):
         """Выход из аккаунта по кнопке «Выйти»."""
-        self._login(driver, base_url, registered_user)
+        driver.get(LOGIN_PAGE)
+        LoginPage(driver).login(registered_user["email"], registered_user["password"])
 
         Header(driver).click_profile_button()
         profile = ProfilePage(driver)
@@ -33,6 +30,4 @@ class TestProfile:
         profile.click_logout()
 
         # После выхода попадаем на форму входа
-        assert LoginPage(driver).is_login_button_displayed(), (
-            "После выхода не отобразилась форма входа"
-        )
+        assert LoginPage(driver).is_login_button_displayed(), "После выхода не отобразилась форма входа"
