@@ -1,4 +1,3 @@
-# pages/header.py
 from pages.base_page import BasePage
 from locators.header_locators import HeaderLocators
 

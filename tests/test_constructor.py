@@ -15,6 +15,11 @@ class TestConstructor:
         driver.get(base_url)
 
         main_page = MainPage(driver)
+
+        # Раздел «Булки» активирован по умолчанию, поэтому сначала переходим в раздел «Соусы».
+        if 'Булки' in tab_locator[1]:
+            main_page.click_tab(MainPageLocators.SAUCES_SECTION)
+
         main_page.click_tab(tab_locator)
 
         # Раздел считается активным, если у его таба появился класс current

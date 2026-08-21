@@ -1,4 +1,3 @@
-# tests/test_login.py
 import pytest
 
 from pages.main_page import MainPage

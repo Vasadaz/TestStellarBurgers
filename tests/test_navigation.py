@@ -1,9 +1,7 @@
-# tests/test_navigation.py
 from pages.header import Header
 from pages.login_page import LoginPage
 from pages.main_page import MainPage
 from pages.profile_page import ProfilePage
-from data.urls import BASE_URL
 
 class TestNavigation:
 

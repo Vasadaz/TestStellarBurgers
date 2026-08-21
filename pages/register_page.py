@@ -1,6 +1,3 @@
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-
 from pages.base_page import BasePage
 from locators.register_locators import RegisterPageLocators
 
@@ -33,11 +30,8 @@ class RegisterPage(BasePage):
         return self.is_displayed(RegisterPageLocators.PASSWORD_ERROR)
 
     def wait_for_login_page(self):
-        """Ожидает переход на страницу входа (после успешной регистрации)."""
-        return WebDriverWait(self.driver, 10).until(
-            lambda d: "login" in d.current_url or
-                      self.driver.find_element(*RegisterPageLocators.LOGIN_LINK)
-        )
+        self.wait.until(lambda d: "login" in d.current_url)
+        return self.is_displayed(RegisterPageLocators.LOGIN_LINK)
 
     def click_login_link(self):
         """Клик по ссылке «Войти» в форме регистрации."""

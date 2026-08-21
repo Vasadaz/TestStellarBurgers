@@ -1,18 +1,17 @@
 import time
-import pytest
 
+from data.test_data import generate_email
 from pages.register_page import RegisterPage
 from pages.login_page import LoginPage
+
 
 class TestRegistration:
 
     def test_successful_registration(self, driver, base_url):
         driver.get(base_url + "register")
 
-        # Уникальный email на основе timestamp — тест перезапускаем
-        email = f"test_{int(time.time() * 1000)}@ya.ru"
-
-        RegisterPage(driver).register("Тестовый Пользователь", email, "password123")
+        # Регистрация уникального пользователя
+        RegisterPage(driver).register("Тестовый Пользователь", generate_email(), "password123")
 
         assert LoginPage(driver).is_login_button_displayed(), (
             "После успешной регистрации не отобразилась страница входа"

@@ -1,7 +1,6 @@
 from pages.header import Header
 from pages.login_page import LoginPage
 from pages.profile_page import ProfilePage
-from data.urls import LOGIN_PAGE, PROFILE_PAGE
 
 class TestProfile:
 
