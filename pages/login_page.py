@@ -1,5 +1,11 @@
 from pages.base_page import BasePage
+from pages.main_page import MainPage
+from pages.header import Header
+from pages.register_page import RegisterPage
+from pages.forgot_password_page import ForgotPasswordPage
 from locators.login_locators import LoginPageLocators
+from data.urls import BASE_URL, REGISTER_PAGE, FORGOT_PASSWORD_PAGE
+
 
 class LoginPage(BasePage):
     def input_email(self, email):
@@ -22,10 +28,28 @@ class LoginPage(BasePage):
 
     def wait_for_current_url(self, expected_url):
         """Ждёт, пока URL станет ожидаемым (после успешного входа)."""
-        return self.wait.until(
-            lambda d: d.current_url == expected_url
-        )
+        return self.wait.until(lambda d: d.current_url == expected_url)
 
     def click_recover_link(self):
         """Клик по ссылке «Восстановить пароль»."""
         self.click(LoginPageLocators.RECOVER_LINK)
+
+    @staticmethod
+    def open_login_via_main_button(driver):
+        driver.get(BASE_URL)
+        MainPage(driver).click_login_button()
+
+    @staticmethod
+    def open_login_via_profile_button(driver):
+        driver.get(BASE_URL)
+        Header(driver).click_profile_button()
+
+    @staticmethod
+    def open_login_via_registration_link(driver):
+        driver.get(REGISTER_PAGE)
+        RegisterPage(driver).click_login_link()
+
+    @staticmethod
+    def open_login_via_forgot_password_link(driver):
+        driver.get(FORGOT_PASSWORD_PAGE)
+        ForgotPasswordPage(driver).click_login_link()
