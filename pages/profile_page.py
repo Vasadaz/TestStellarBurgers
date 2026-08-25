@@ -24,3 +24,7 @@ class ProfilePage(BasePage):
             lambda d: self.is_displayed(ProfilePageLocators.LOGOUT_BUTTON)
         )
         return self
+
+    def is_on_profile_page(self):
+        """Проверяет, что текущий URL соответствует личному кабинету."""
+        return "account" in self.current_url()

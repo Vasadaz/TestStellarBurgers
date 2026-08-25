@@ -5,7 +5,7 @@ from data.urls import BASE_URL
 
 class TestConstructor:
     def test_section_navigation_to_buns(self, driver):
-        driver.get(BASE_URL)
+        MainPage(driver).open(BASE_URL)
 
         main_page = MainPage(driver)
         tab_locator = MainPageLocators.BUNS_SECTION
@@ -20,7 +20,7 @@ class TestConstructor:
         assert main_page.is_tab_active(tab_locator), f"Раздел не активировался: {tab_locator}"
 
     def test_section_navigation_to_sauces(self, driver):
-        driver.get(BASE_URL)
+        MainPage(driver).open(BASE_URL)
 
         main_page = MainPage(driver)
         tab_locator = MainPageLocators.SAUCES_SECTION
@@ -32,7 +32,7 @@ class TestConstructor:
         assert main_page.is_tab_active(tab_locator), f"Раздел не активировался: {tab_locator}"
 
     def test_section_navigation_to_fillings(self, driver):
-        driver.get(BASE_URL)
+        MainPage(driver).open(BASE_URL)
 
         main_page = MainPage(driver)
         tab_locator = MainPageLocators.FILLINGS_SECTION

@@ -7,8 +7,7 @@ from data.urls import LOGIN_PAGE
 class TestNavigation:
     def test_navigate_to_constructor_via_button(self, driver, registered_user):
         """Переход из ЛК в конструктор по кнопке «Конструктор»."""
-        driver.get(LOGIN_PAGE)
-        LoginPage(driver).login(registered_user["email"], registered_user["password"])
+        LoginPage(driver).open_and_login(registered_user["email"], registered_user["password"])
         Header(driver).click_profile_button()
         ProfilePage(driver).wait_until_loaded()
 
@@ -19,8 +18,7 @@ class TestNavigation:
 
     def test_navigate_to_constructor_via_logo(self, driver, registered_user):
         """Переход из ЛК в конструктор по клику на логотип Stellar Burgers."""
-        driver.get(LOGIN_PAGE)
-        LoginPage(driver).login(registered_user["email"], registered_user["password"])
+        LoginPage(driver).open_and_login(registered_user["email"], registered_user["password"])
         Header(driver).click_profile_button()
         ProfilePage(driver).wait_until_loaded()
 

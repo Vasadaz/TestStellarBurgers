@@ -4,7 +4,7 @@ from pages.header import Header
 from pages.register_page import RegisterPage
 from pages.forgot_password_page import ForgotPasswordPage
 from locators.login_locators import LoginPageLocators
-from data.urls import BASE_URL, REGISTER_PAGE, FORGOT_PASSWORD_PAGE
+from data.urls import BASE_URL, REGISTER_PAGE, FORGOT_PASSWORD_PAGE, LOGIN_PAGE
 
 
 class LoginPage(BasePage):
@@ -54,3 +54,7 @@ class LoginPage(BasePage):
         self.open(FORGOT_PASSWORD_PAGE)
         ForgotPasswordPage(self.driver).click_login_link()
 
+    def open_and_login(self, email, password):
+        """Открывает страницу входа и авторизуется."""
+        self.open(LOGIN_PAGE)
+        self.login(email, password)
