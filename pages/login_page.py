@@ -34,22 +34,23 @@ class LoginPage(BasePage):
         """Клик по ссылке «Восстановить пароль»."""
         self.click(LoginPageLocators.RECOVER_LINK)
 
-    @staticmethod
-    def open_login_via_main_button(driver):
-        driver.get(BASE_URL)
-        MainPage(driver).click_login_button()
+    def open_login_via_main_button(self):
+        """Переход к форме входа через кнопку «Войти в аккаунт» на главной."""
+        self.open(BASE_URL)
+        MainPage(self.driver).click_login_button()
 
-    @staticmethod
-    def open_login_via_profile_button(driver):
-        driver.get(BASE_URL)
-        Header(driver).click_profile_button()
+    def open_login_via_profile_button(self):
+        """Переход к форме входа через кнопку «Личный кабинет» в шапке."""
+        self.open(BASE_URL)
+        Header(self.driver).click_profile_button()
 
-    @staticmethod
-    def open_login_via_registration_link(driver):
-        driver.get(REGISTER_PAGE)
-        RegisterPage(driver).click_login_link()
+    def open_login_via_registration_link(self):
+        """Переход к форме входа через ссылку «Войти» на странице регистрации."""
+        self.open(REGISTER_PAGE)
+        RegisterPage(self.driver).click_login_link()
 
-    @staticmethod
-    def open_login_via_forgot_password_link(driver):
-        driver.get(FORGOT_PASSWORD_PAGE)
-        ForgotPasswordPage(driver).click_login_link()
+    def open_login_via_forgot_password_link(self):
+        """Переход к форме входа через ссылку «Войти» на странице восстановления пароля."""
+        self.open(FORGOT_PASSWORD_PAGE)
+        ForgotPasswordPage(self.driver).click_login_link()
+
