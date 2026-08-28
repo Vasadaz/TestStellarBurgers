@@ -1,0 +1,6 @@
+from locators.main_locators import MainPageLocators
+from locators.login_locators import LoginPageLocators
+from locators.register_locators import RegisterPageLocators
+from locators.forgot_password_locators import ForgotPasswordPageLocators
+from locators.profile_locators import ProfilePageLocators
+from locators.header_locators import HeaderLocators
